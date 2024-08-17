@@ -1,0 +1,30 @@
+### Recuperar todas las peliculas
+GET http://localhost:1234/movies
+
+### Recuperar una pelicula por id
+GET http://localhost:1234/movies/1
+
+
+### Recuperar una pelicula por un genero
+GET http://localhost:1234/movies?genre=Action
+
+### Crear una pelicula
+POST http://localhost:1234/movies
+Content-Type: application/json
+
+{
+    "title": "Cars",
+    "year": 2006,
+    "director": "John Lasseter",
+    "duration": 117,
+    "poster": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS3_Bu8aJaA_DE7bOSQ7bz3o9Y6whQ7_0PxNnBfGXQ82nE1xVRh",
+    "genre": ["Comedy"]
+}
+
+### Actualizar una pelicula
+PATCH http://localhost:1234/movies/6a360a18-c645-4b47-9a7b-2a71babbf3e0
+Content-Type: application/json
+
+{
+    "year": 2000
+}
