@@ -19,7 +19,8 @@
         }
     </style>
     <script type="module">
-        fetch('http://localhost:1234/movies')
+        const PORT = process.env.PORT ?? 1234
+        fetch(`http://localhost:${PORT}/movies`)
         .then(res => res.json())
         .then(movies => {
             
