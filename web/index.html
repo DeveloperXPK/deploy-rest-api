@@ -3,24 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApiRest</title>
+    <title>ApiRest - Películas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        article {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
         }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .movies-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        article {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 300px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        article:hover {
+            transform: translateY(-10px);
+        }
+
         img {
-            width: 320px;
+            width: 100%;
             height: auto;
-            max-width: 100%;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+
+        p {
+            margin: 5px 0;
+            font-size: 1em;
+            color: #555;
+        }
+
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff1a1a;
         }
     </style>
     <script type="module">
-        const PORT = process.env.PORT ?? 1234
-        fetch(`http://localhost:${PORT}/movies`)
+        fetch(`http://localhost:1234/movies`)
         .then(res => res.json())
         .then(movies => {
             
@@ -37,30 +90,33 @@
 
                         <button>Eliminar</button>
                     </article>
-                `
+                `;
             }).join('')
 
-            document.querySelector('body').innerHTML = html
+            document.querySelector('body').innerHTML = `
+                <h1>Listado de Películas</h1>
+                <div class="movies-container">${html}</div>
+            `;
 
             document.addEventListener('click', e => {
                 if (e.target.matches('button')) {
-                    const article = e.target.closest('article')
-                    const id = article.dataset.id
+                    const article = e.target.closest('article');
+                    const id = article.dataset.id;
 
                     fetch(`http://localhost:1234/movies/${id}`, {
                         method: 'DELETE'
                     })
                     .then(res => {
                         if (res.ok) {
-                            article.remove()
+                            article.remove();
                         }
                     })
                 }
-            })
+            });
         })
     </script>
 </head>
 <body>
-    
+
 </body>
 </html>

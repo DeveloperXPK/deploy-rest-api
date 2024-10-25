@@ -1,12 +1,20 @@
-const express = require('express')
-const crypto = require('node:crypto')
-const movies = require('./movies.json')
-const { validateMovie, validatePartialMovie } = require('./schemas/movies')
+import express, { json } from 'express'
+import { randomUUID } from 'node:crypto'
+import { validateMovie, validatePartialMovie } from './schemas/movies.js'
 const PORT = process.env.PORT ?? 1234
 
+//import fs from 'node:fs'
+//const movies = JSON.parse(fs.readFileSync('./movies.json', 'utf-8'))
+
+// Como leer un json en ESmodules recomendado
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const movies = require('./movies.json')
+
+
 const app = express()
-app.use(express.json())
-app.disable('x-powered-by')
+app.use(json()) // Middleware para parsear el body de las peticiones
+app.disable('x-powered-by') // Deshabilita la cabecera de express
 
 app.get('/', (req, res) => {
   res.send('<h1>Mi primer API REST</h1>')
@@ -23,12 +31,12 @@ const ACCEPTED_ORIGINS = [
 ]
 
 app.get('/movies', (req, res) => {
-  const origin = req.header('origin') // Se verifica que el origin este dentro de los permitidos
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin) // <-- En caso que si este o no existe
-    // se le otorgara el acceso
-  }
-  const { genre } = req.query
+  // const origin = req.header('origin') // Se verifica que el origin este dentro de los permitidos
+  // if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+  res.header('Access-Control-Allow-Origin', '*') // <-- En caso que si este o no existe
+  // se le otorgara el acceso
+  // }
+  const { genre } = req.query // query es un objeto que contiene todas las querys de la url
   if (genre) {
     const movie = movies.filter(movie => movie.genre.includes(genre))
     if (movie.length !== 0) return res.json(movie)
@@ -53,7 +61,7 @@ app.post('/movies', (req, res) => {
   }
 
   const newMovie = {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     ...result.data // Pasa todos los datos que han sido validados en result
   }
 
@@ -65,9 +73,9 @@ app.post('/movies', (req, res) => {
 
 app.delete('/movies/:id', (req, res) => {
   const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin)
-  }
+  // if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+  res.header('Access-Control-Allow-Origin', '*')
+  // }
   const { id } = req.params
   const movieIndex = movies.findIndex(movie => movie.id === id)
 
@@ -84,10 +92,10 @@ app.delete('/movies/:id', (req, res) => {
 app.options('/movies/:id', (req, res) => {
   const origin = req.header('origin')
   // !origin es para que no se aplique el CORS en el caso de que no haya origin
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin)
-    res.header('Access-Control-Allow-Methods', 'PUT, DELETE, PATCH, GET, POST')
-  }
+  // if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+  res.header('Access-Control-Allow-Origin', "*")
+  res.header('Access-Control-Allow-Methods', 'PUT, DELETE, PATCH, GET, POST')
+  // }
 
   res.send(200)
 })
